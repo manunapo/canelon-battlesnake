@@ -45,19 +45,7 @@ class GridGraph:
                     counter += 1
                 # print(f"For {x},{y} - added {counter} neig")
                 counter = 0
-        '''
-        # Add neighbors which are not obtacles nor edges
-        for y in range(self.height):
-            for x in range(self.width):
-                if ((x + 1) < self.width):
-                    self.grid[x][y].add_neighbor(self.grid[x+1][y])
-                if ((x - 1) > 0 ):
-                    self.grid[x][y].add_neighbor(self.grid[x-1][y])
-                if ((y + 1) < self.height):
-                    self.grid[x][y].add_neighbor(self.grid[x][y+1])
-                if ((y - 1) > 0):
-                    self.grid[x][y].add_neighbor(self.grid[x][y-1])
-        '''
+       
     def get_neighbors(self, grid_node):
         return grid_node.get_neighbors()
 
@@ -92,7 +80,7 @@ class GridGraph:
                     n = v
  
             if n == None:
-                print('Path does not exist!')
+                print('AFF - Path does not exist!')
                 return []
  
             # if the current node is the stop
@@ -139,5 +127,5 @@ class GridGraph:
             open_lst.remove(n)
             closed_lst.add(n)
  
-        print('Path does not exist!')
+        print('AFF - Path does not exist!')
         return []
