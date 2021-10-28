@@ -6,6 +6,7 @@ class GridGraph:
         self.width = width
         self.my_snake_head = None
         self.my_snake_tail = None
+        self.my_enemy_heads = []
         self.the_food = []
         self.grid = [ [ GridNode(x,y) for y in range(height) ] for x in range(width) ]
  
@@ -16,35 +17,31 @@ class GridGraph:
         self.my_snake_head = self.grid[my_snake["body"][0]['x']][my_snake["body"][0]['y']]
         self.my_snake_tail = self.grid[my_snake["body"][-1]['x']][my_snake["body"][-1]['y']]
         self.my_snake_head.to_my_head()
+        self.my_snake_head.set_snake_length(my_snake["length"])
 
         for snake in enemy_snakes:
             for part in snake["body"]:
                 self.grid[part['x']][part['y']].to_enemy_snake()
-            self.my_enemy_head = self.grid[snake["body"][0]['x']][snake["body"][0]['y']]
-            self.my_enemy_head.to_enemy_head()
+            snake_head = self.grid[snake["body"][0]['x']][snake["body"][0]['y']]
+            snake_head.to_enemy_head()
+            self.my_enemy_heads.append(snake_head)
+            snake_head.set_snake_length(snake["length"])
 
         for f in food:
             self.the_food.append(self.grid[f['x']][f['y']])
             self.grid[f['x']][f['y']].to_food()
-        counter = 0
 
         # Add neighbors which are not obtacles nor edges
         for y in range(self.height):
             for x in range(self.width):
                 if ((x + 1) < self.width) and (self.grid[x+1][y].is_crossable()):
                     self.grid[x][y].add_neighbor(self.grid[x+1][y])
-                    counter += 1
                 if ((x - 1) >= 0) and (self.grid[x-1][y].is_crossable()):
                     self.grid[x][y].add_neighbor(self.grid[x-1][y])
-                    counter += 1
                 if ((y + 1) < self.height) and (self.grid[x][y+1].is_crossable()):
                     self.grid[x][y].add_neighbor(self.grid[x][y+1])
-                    counter += 1
                 if ((y - 1) >= 0) and (self.grid[x][y-1].is_crossable()):
                     self.grid[x][y].add_neighbor(self.grid[x][y-1])
-                    counter += 1
-                # print(f"For {x},{y} - added {counter} neig")
-                counter = 0
        
     def get_neighbors(self, grid_node):
         return grid_node.get_neighbors()

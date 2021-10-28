@@ -11,7 +11,7 @@ MODE_CHASE_ENEMY_TAIL = 3
 HEALTH_TRESHOLD = 100
 
 '''
-    This snake is a chicken snake
+    Update: Canelon Will go for good all time
 
     Canelon will move randomly the first 3 Turns because the snake is not fully displayed on the board.
     Canelon will eat only when its health treshold went less than HEALTH_TRESHOLD
@@ -35,7 +35,8 @@ class LogicHandler():
     def __init__(self,board_height,board_width):
         self.gg = GridGraph(board_height,board_width)
         self.health = 100
-        self.mode = MODE_CHASE_MY_TAIL
+        #self.mode = MODE_CHASE_MY_TAIL
+        self.mode = MODE_EAT
         self.turn = 0
 
     def load_turn(self, data):
@@ -47,12 +48,15 @@ class LogicHandler():
             if snake["id"] != my_snake["id"]:
                 enemy_snakes.append(snake)
         self.gg.update_grid(my_snake,enemy_snakes,food)
-        if my_snake['health'] < HEALTH_TRESHOLD:
+        
+        '''
+        if my_snake['health'] <= HEALTH_TRESHOLD:
             self.mode = MODE_EAT
-        elif self.turn > 3:
+        elif self.turn >= 3:
             self.mode = MODE_CHASE_MY_TAIL
         else:
             self.mode = MODE_RANDOM
+        '''
 
     def pos_to_move(self,fx,fy,tx,ty):
         if ((fx == tx) and (fy+1 == ty)): return "up"
@@ -105,34 +109,32 @@ class LogicHandler():
     def print_grid(self):
         self.gg.aux_print_grid()
 
-    def has_enemy_head_at_shoot_point(self):
-        for neighbor,weight in self.gg.my_snake_head.get_neighbors():
-            if (neighbor != None):
-                if neighbor.is_enemy_head():
-                    fx = self.gg.my_snake_head.x
-                    fy = self.gg.my_snake_head.y
-                    tx = neighbor.x
-                    ty = neighbor.y
-                    return self.pos_to_move(fx,fy,tx,ty)
-        return ""
+    def has_potencial_collision(self):
+        # to work on
+        # we have 8 potencial position to look at
+        # need to check if we can win the collision or not
+        pass
 
     def calculate_move(self,possible_moves):
         print(f"Calculating move with these parameters:")
         print(f"MODE: {self.mode}")
         print(f"possible_moves: {possible_moves}")
-        if len(possible_moves) > 0:
-            has_shoot = self.has_enemy_head_at_shoot_point()
-            if has_shoot:
-                possible_moves = [has_shoot]
-                print(f"INFO - Shooting")
+        next_move = ""
+        if len(possible_moves) > 1:
+            has_potencial_collision = False
+            if has_potencial_collision:
+                # To implement
+                print(f"INFO - has_potencial_collision")
             elif (self.mode == MODE_EAT):
                 next_move = self.search_food()
+                print(f"INFO - Searching food")
             elif (self.mode == MODE_CHASE_MY_TAIL):
                 next_move = self.search_my_tail()
+                print(f"INFO - Chasing my tail")
             else: # MODE_RANDOM
                 next_move = random.choice(possible_moves)
         if not next_move:
-            print(f"There is not move yet, lets go random")
             next_move = random.choice(possible_moves)
+            print(f"INFO - Going random")
         print(f"Move Calculated to: {next_move}")
         return next_move

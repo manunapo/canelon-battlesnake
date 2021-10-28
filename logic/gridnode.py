@@ -18,6 +18,10 @@ class GridNode():
         self.type = 0
         self.neighbors = []
 
+        # workaround to store the snake length/size in his head node
+        # usefull for collisions
+        self.snake_length = 3
+
     def __hash__(self):
         return hash((self.x, self.y ))
 
@@ -89,3 +93,9 @@ class GridNode():
 
     def get_type(self):
         return self.type
+
+    def set_snake_length(self,length):
+        self.snake_length = length
+
+    def get_snake_length(self):
+        return self.snake_length
