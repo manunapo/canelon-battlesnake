@@ -21,6 +21,8 @@ HEALTH_TRESHOLD = 20
             be neighbor of no other node.
             Here would be nice to decide which of the neighbor nodes could be a better choise 
 
+    Finally, if there is not any path or possible good move. Canelon will take a random move.
+
     The A* algorithm is used to find a path to food or this tail's neighbors
         There are two improvement still needed for the graph/nodes:
             - Add a herusitic function (now it is hardcoded to 1 for all nodes)
