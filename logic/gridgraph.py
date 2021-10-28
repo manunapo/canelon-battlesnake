@@ -96,9 +96,7 @@ class GridGraph:
  
                 reconst_path.reverse()
  
-                for step in reconst_path:
-                    print(f" - {step.x},{step.y}")
-                # print('Path found: {}'.format(reconst_path))
+                print(f"YEAH - a Path exists! {reconst_path}")
                 return reconst_path
  
             # for all the neighbors of the current node do
