@@ -8,7 +8,7 @@ MODE_CHASE_MY_TAIL = 2
 # Possible mode to implement
 MODE_CHASE_ENEMY_TAIL = 3
 
-HEALTH_TRESHOLD = 20
+HEALTH_TRESHOLD = 50
 
 '''
     This snake is a chicken snake

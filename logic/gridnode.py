@@ -26,6 +26,9 @@ class GridNode():
             return False
         return (self.x, self.y) == (other.x, other.y)
 
+    def __str__(self):
+        return f"({self.x},{self.y})"
+
     def get_x(self):
         return self.x
 
