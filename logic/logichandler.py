@@ -5,7 +5,28 @@ MODE_RANDOM = 0
 MODE_EAT = 1
 MODE_CHASE_MY_TAIL = 2
 
+# Possible mode to implement
+MODE_CHASE_ENEMY_TAIL = 3
+
 HEALTH_TRESHOLD = 20
+
+'''
+    This snake is a chicken snake
+
+    Canelon will move randomly the first 3 Turns because the snake is not fully displayed on the board.
+    Canelon will eat only when its health treshold went less than HEALTH_TRESHOLD
+    Canelon will chase THE NEIGHBORS of his tail when he is not hungry.
+        Why chase tail's neighbors instead of the tail itself? 
+            Because of how i have implemented the relation between the nodes, if the node is not available (nor food nor empty), it will not
+            be neighbor of no other node.
+            Here would be nice to decide which of the neighbor nodes could be a better choise 
+
+    The A* algorithm is used to find a path to food or this tail's neighbors
+        There are two improvement still needed for the graph/nodes:
+            - Add a herusitic function (now it is hardcoded to 1 for all nodes)
+            - Potencially add a weight to every neighbor, now all jumps to neighbors are 1
+    
+'''
 
 class LogicHandler():
 
