@@ -12,8 +12,8 @@ HEALTH_TRESHOLD = 100
 
 '''
     Update: Canelon Will go for good all time
+            But if there is a threat, will ingore that food.
 
-    Canelon cat move randomly.
     Canelon will eat only when its health treshold went less than HEALTH_TRESHOLD
     Canelon will chase THE NEIGHBORS of his tail when he is not hungry if it is set.
         Why chase tail's neighbors instead of the tail itself? 
@@ -78,14 +78,11 @@ class LogicHandler():
             if (len(new_path) < shortest_length):
                 closest_path_to_food = new_path
                 shortest_length = len(new_path)
-        fx = self.gg.my_snake_head.x
-        fy = self.gg.my_snake_head.y
+
         if (len(closest_path_to_food) > 1):
-            tx = closest_path_to_food[1].x
-            ty = closest_path_to_food[1].y
-        else:
-            return ""
-        return self.pos_to_move(fx,fy,tx,ty)
+            return closest_path_to_food[1]
+        else: 
+            return None
 
     def search_my_tail(self):
         longest_path_to_tail = []
@@ -97,23 +94,10 @@ class LogicHandler():
                 if (len(new_path) > longest_length):
                     longest_path_to_tail = new_path
                     longest_length = len(new_path)
-        fx = self.gg.my_snake_head.x
-        fy = self.gg.my_snake_head.y
         if (len(longest_path_to_tail) > 1):
-            tx = longest_path_to_tail[1].x
-            ty = longest_path_to_tail[1].y
-        else:
-            return ""
-        return self.pos_to_move(fx,fy,tx,ty)
-
-    def print_grid(self):
-        self.gg.aux_print_grid()
-
-    def has_potencial_collision(self):
-        # to work on
-        # we have 8 potencial position to look at
-        # need to check if we can win the collision or not
-        pass
+            return longest_path_to_tail[1]
+        else: 
+            return None
 
     def find_move_with_most_space(self):
         print(f"INFO - Finding the longest path to be safe")
@@ -124,37 +108,83 @@ class LogicHandler():
             if len(path) > size:
                 size = len(path)
                 biggest_path = path
-        fx = self.gg.my_snake_head.x
-        fy = self.gg.my_snake_head.y
         if (len(biggest_path) > 1):
-            tx = biggest_path[0].x
-            ty = biggest_path[0].y
-        else:
-            return ""
-        return self.pos_to_move(fx,fy,tx,ty)
+            return biggest_path[0]
+        else: 
+            return None
+
+    def print_grid(self):
+        self.gg.aux_print_grid()
+
+    def has_potencial_threat(self, dest_node):
+        node_enemy_head = None
+        for n in self.gg.get_adjacent_nodes(dest_node):
+            if n.is_enemy_head():
+                node_enemy_head = n
+          
+        if node_enemy_head != None:
+            if node_enemy_head.get_snake_length() > self.gg.my_snake_head.get_snake_length():
+                print(f"INFO - There is threat!")
+                return True
+        print(f"INFO - There is not threat!")
+        return False
 
     def calculate_move(self,possible_moves):
         print(f"Calculating move with these parameters:")
         print(f"MODE: {self.mode}")
         print(f"possible_moves: {possible_moves}")
         next_move = ""
+        node_next_move = None
+        fx = self.gg.my_snake_head.x
+        fy = self.gg.my_snake_head.y
         if len(possible_moves) > 1:
-            has_potencial_collision = False
-            if has_potencial_collision:
-                # To implement
-                print(f"INFO - has_potencial_collision")
-            elif (self.mode == MODE_EAT):
+
+            if (self.mode == MODE_EAT):
                 print(f"INFO - Searching food")
-                next_move = self.search_food()
-                if not next_move:
-                    next_move = self.find_move_with_most_space()
+                node_next_move = self.search_food()
+                if node_next_move != None:
+                    tx = node_next_move.x
+                    ty = node_next_move.y
+                    next_move = self.pos_to_move(fx,fy,tx,ty)
+                    if self.has_potencial_threat(node_next_move):
+                        print(f"INFO - Oh.. There is a thread to our next move to food, lets recalculate it")
+                        if len(possible_moves) == 3:
+                            self.gg.my_snake_head.remove_neighbor(node_next_move)
+                            node_next_move = self.find_move_with_most_space()
+                            if node_next_move != None:
+                                tx = node_next_move.x
+                                ty = node_next_move.y
+                                next_move = self.pos_to_move(fx,fy,tx,ty)
+                        elif len(possible_moves) == 2:
+                            if possible_moves[0] == next_move:
+                                next_move = possible_moves[1]
+                            else:
+                                next_move = possible_moves[0]
+                else:
+                    # No path to food!, lets go to the most space path
+                    node_next_move = self.find_move_with_most_space()
+                    if node_next_move != None:
+                        tx = node_next_move.x
+                        ty = node_next_move.y
+                        next_move = self.pos_to_move(fx,fy,tx,ty)
+                
                 
             elif (self.mode == MODE_CHASE_MY_TAIL):
-                next_move = self.search_my_tail()
-                if not next_move:
-                    next_move = self.find_move_with_most_space()
                 print(f"INFO - Chasing my tail")
+                node_next_move = self.search_my_tail()
+                if node_next_move != None:
+                    tx = node_next_move.x
+                    ty = node_next_move.y
+                    next_move = self.pos_to_move(fx,fy,tx,ty)
+                if not next_move:
+                    node_next_move = self.find_move_with_most_space()
+                    if node_next_move != None:
+                        tx = node_next_move.x
+                        ty = node_next_move.y
+                        next_move = self.pos_to_move(fx,fy,tx,ty)
+                
             elif (self.mode == MODE_RANDOM):
+                print(f"INFO - Mode random")
                 next_move = random.choice(possible_moves)
 
         if not next_move and (len(possible_moves) > 0):

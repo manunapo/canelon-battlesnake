@@ -46,6 +46,20 @@ class GridGraph:
     def get_neighbors(self, grid_node):
         return grid_node.get_neighbors()
 
+    def get_adjacent_nodes(self,grid_node):
+        x = grid_node.x
+        y = grid_node.y
+        nodes = []
+        if ((x + 1) < self.width):
+            nodes.append(self.grid[x+1][y])
+        if ((x - 1) >= 0):
+            nodes.append(self.grid[x-1][y])
+        if ((y + 1) < self.height):
+            nodes.append(self.grid[x][y+1])
+        if ((y - 1) >= 0):
+            nodes.append(self.grid[x][y-1])
+        return nodes
+
     # This is heuristic function which is having equal values for all nodes
     def heuristic(self, n):
         return 1

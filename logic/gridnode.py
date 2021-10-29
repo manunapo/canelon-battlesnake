@@ -90,6 +90,9 @@ class GridNode():
     def get_neighbors(self):
         return self.neighbors
 
+    def remove_neighbor(self,grid_node):
+        self.neighbors.remove((grid_node,NODE_WEIGHT))
+
 
     def get_type(self):
         return self.type
