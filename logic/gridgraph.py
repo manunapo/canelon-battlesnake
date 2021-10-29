@@ -53,7 +53,7 @@ class GridGraph:
     def a_star_algorithm(self, start, stop):
         # In this open_lst is a lisy of nodes which have been visited, but who's 
         # neighbours haven't all been always inspected, It starts off with the start 
-  #node
+        # node
         # And closed_lst is a list of nodes which have been visited
         # and who's neighbors have been always inspected
         open_lst = set([start])
@@ -77,7 +77,7 @@ class GridGraph:
                     n = v
  
             if n == None:
-                print('AFF - Path does not exist!')
+                print('INFO - Path does not exist!')
                 return []
  
             # if the current node is the stop
@@ -93,7 +93,7 @@ class GridGraph:
  
                 reconst_path.reverse()
  
-                print(f"YEAH - a Path exists! {reconst_path}")
+                print(f"INFO - Path exist!")
                 return reconst_path
  
             # for all the neighbors of the current node do
@@ -122,5 +122,18 @@ class GridGraph:
             open_lst.remove(n)
             closed_lst.add(n)
  
-        print('AFF - Path does not exist!')
+        print('INFO - Path does not exist!')
         return []
+
+    def dfs(self, visited, node, path):
+        if node not in visited:
+            path.append(node)
+            visited.add(node)
+            for neighbour,weight in node.get_neighbors():
+                self.dfs(visited, neighbour, path)
+
+    def get_free_path(self,root):
+        visited = set()
+        path = []
+        self.dfs(visited,root,path)
+        return path

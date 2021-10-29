@@ -13,9 +13,9 @@ HEALTH_TRESHOLD = 100
 '''
     Update: Canelon Will go for good all time
 
-    Canelon will move randomly the first 3 Turns because the snake is not fully displayed on the board.
+    Canelon cat move randomly.
     Canelon will eat only when its health treshold went less than HEALTH_TRESHOLD
-    Canelon will chase THE NEIGHBORS of his tail when he is not hungry.
+    Canelon will chase THE NEIGHBORS of his tail when he is not hungry if it is set.
         Why chase tail's neighbors instead of the tail itself? 
             Because of how i have implemented the relation between the nodes, if the node is not available (nor food nor empty), it will not
             be neighbor of no other node.
@@ -115,6 +115,24 @@ class LogicHandler():
         # need to check if we can win the collision or not
         pass
 
+    def find_move_with_most_space(self):
+        print(f"INFO - Finding the longest path to be safe")
+        size = 0
+        biggest_path = []
+        for neig,w in self.gg.my_snake_head.get_neighbors():
+            path = self.gg.get_free_path(neig)
+            if len(path) > size:
+                size = len(path)
+                biggest_path = path
+        fx = self.gg.my_snake_head.x
+        fy = self.gg.my_snake_head.y
+        if (len(biggest_path) > 1):
+            tx = biggest_path[0].x
+            ty = biggest_path[0].y
+        else:
+            return ""
+        return self.pos_to_move(fx,fy,tx,ty)
+
     def calculate_move(self,possible_moves):
         print(f"Calculating move with these parameters:")
         print(f"MODE: {self.mode}")
@@ -126,14 +144,20 @@ class LogicHandler():
                 # To implement
                 print(f"INFO - has_potencial_collision")
             elif (self.mode == MODE_EAT):
-                next_move = self.search_food()
                 print(f"INFO - Searching food")
+                next_move = self.search_food()
+                if not next_move:
+                    next_move = self.find_move_with_most_space()
+                
             elif (self.mode == MODE_CHASE_MY_TAIL):
                 next_move = self.search_my_tail()
+                if not next_move:
+                    next_move = self.find_move_with_most_space()
                 print(f"INFO - Chasing my tail")
-            else: # MODE_RANDOM
+            elif (self.mode == MODE_RANDOM):
                 next_move = random.choice(possible_moves)
-        if not next_move:
+
+        if not next_move and (len(possible_moves) > 0):
             next_move = random.choice(possible_moves)
             print(f"INFO - Going random")
         print(f"Move Calculated to: {next_move}")
